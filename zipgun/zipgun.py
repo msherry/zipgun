@@ -45,7 +45,6 @@ class Zipgun(object):
                 reader = csv.DictReader(f, fieldnames=fieldnames,
                                         delimiter=str('\t'))
                 for line in reader:
-                    print line
                     postal_codes = (
                         country_postal_codes[line['COUNTRY_CODE']])
                     postal_code = line['POSTAL_CODE']
@@ -54,6 +53,8 @@ class Zipgun(object):
                         'city': line['PLACE_NAME'],
                         'lat': line['LATITUDE'],
                         'lon': line['LONGITUDE'],
+                        'country_code': line['COUNTRY_CODE'],
+                        'postal_code': postal_code,
                     }
                     if postal_code in postal_codes:
                         postal_codes[postal_code].update(data)
@@ -62,5 +63,5 @@ class Zipgun(object):
         self.country_postal_codes = dict(country_postal_codes)
 
     def lookup(self, postal_code, country_code='US'):
-        postal_codes = self.country_postal_codes[country_code]
+        postal_codes = self.country_postal_codes.get(country_code, {})
         return postal_codes.get(postal_code, {})
