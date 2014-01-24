@@ -12,6 +12,10 @@ tests_require = [
     'nose >= 1.1.2',
 ]
 
+install_requires = [
+    'sqlitedict',
+]
+
 setup(
     name='zipgun',
     version='0.1.1',
@@ -21,6 +25,7 @@ setup(
     packages=['zipgun'],
     url='http://github.com/msherry/zipgun',
     tests_require=tests_require,
+    install_requires=install_requires,
     classifiers=[
         'Intended Audience :: Developers',
         'Development Status :: 4 - Beta',

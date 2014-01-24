@@ -5,6 +5,10 @@ import csv
 import glob
 import os
 
+from sqlitedict import SqliteDict
+
+DATA_FILE = 'zipgun.db'
+
 
 class FIELDS(object):
     # iso country code, 2 characters
@@ -35,7 +39,19 @@ class FIELDS(object):
 
 class Zipgun(object):
 
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, force_text=False):
+        if (force_text or
+                not os.path.exists(os.path.join(data_dir, DATA_FILE))):
+            country_postal_codes = self.import_text_data(data_dir)
+        else:
+            country_postal_codes = self.import_sql_data(data_dir)
+        self.country_postal_codes = country_postal_codes
+
+    def import_sql_data(self, data_dir):
+        country_postal_codes = SqliteDict(os.path.join(data_dir, DATA_FILE))
+        return country_postal_codes
+
+    def import_text_data(self, data_dir):
         country_postal_codes = defaultdict(lambda: dict())
 
         fieldnames = sorted([k for k in FIELDS.__dict__ if k.upper() == k],
@@ -60,7 +76,7 @@ class Zipgun(object):
                         postal_codes[postal_code].update(data)
                     else:
                         postal_codes[postal_code] = data
-        self.country_postal_codes = dict(country_postal_codes)
+            return dict(country_postal_codes)
 
     def lookup(self, postal_code, country_code='US'):
         postal_codes = self.country_postal_codes.get(country_code, {})
