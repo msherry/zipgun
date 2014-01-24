@@ -14,11 +14,11 @@ tests_require = [
 
 setup(
     name='zipgun',
-    version='0.1',
+    version='0.1.1',
     description='Postal code library for Python',
     author='Marc Sherry',
     author_email='msherry@gmail.com',
-    py_modules=['zipgun'],
+    packages=['zipgun'],
     url='http://github.com/msherry/zipgun',
     tests_require=tests_require,
     classifiers=[
