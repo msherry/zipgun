@@ -38,18 +38,22 @@ class Zipgun(object):
     def __init__(self, data_dir):
         country_postal_codes = defaultdict(lambda: dict())
 
+        fieldnames = sorted([k for k in FIELDS.__dict__ if k.upper() == k],
+                            key=lambda x: FIELDS.__dict__[x])
         for filename in glob.glob(os.path.join(data_dir, '*')):
             with open(filename) as f:
-                reader = csv.reader(f, delimiter=str('\t'))
+                reader = csv.DictReader(f, fieldnames=fieldnames,
+                                        delimiter=str('\t'))
                 for line in reader:
+                    print line
                     postal_codes = (
-                        country_postal_codes[line[FIELDS.COUNTRY_CODE]])
-                    postal_code = line[FIELDS.POSTAL_CODE]
+                        country_postal_codes[line['COUNTRY_CODE']])
+                    postal_code = line['POSTAL_CODE']
                     data = {
-                        'region': line[FIELDS.ADMIN_CODE1],
-                        'city': line[FIELDS.PLACE_NAME],
-                        'lat': line[FIELDS.LATITUDE],
-                        'lon': line[FIELDS.LONGITUDE],
+                        'region': line['ADMIN_CODE1'],
+                        'city': line['PLACE_NAME'],
+                        'lat': line['LATITUDE'],
+                        'lon': line['LONGITUDE'],
                     }
                     if postal_code in postal_codes:
                         postal_codes[postal_code].update(data)
