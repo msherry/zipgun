@@ -7,10 +7,10 @@ A postal code library for Python. Uses data from the [GeoNames project](http://w
 Usage
 -----
 
-* Download all desired data files from the [GeoNames project](http://download.geonames.org/export/zip/) (future versions will have scripts for this)
+* Download and extract all desired postal data files from the [GeoNames project](http://download.geonames.org/export/zip/) (future versions will have scripts for this)
 * (Optional but recommended) Convert these .txt files to a sqlite3-backed db with `scripts/generate_db.py <data_dir>`
 * Instantiate a Zipgun instance using the data directory: `zg = Zipgun('data_dir')`
-* Query Zipgun instance with a postal code string: 
+* Query Zipgun instance with a postal code string:
     ```python
     In [1]: zg.lookup('90210')
     Out[1]:
@@ -20,7 +20,6 @@ Usage
      u'lon': '-118.4065',
      u'postal_code': '90210',
      u'region': 'CA'}
-    
     ```
 
 * Queries default to the United States -- to look up postal codes in other countries (if you've downloaded data files for them), pass the [ISO 3166 alpha 2 code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2):
