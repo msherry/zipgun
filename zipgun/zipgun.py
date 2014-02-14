@@ -4,6 +4,7 @@ from collections import defaultdict
 import csv
 import glob
 import os
+import sqlite3
 
 from sqlitedict import SqliteDict
 
@@ -69,8 +70,13 @@ def _import_sql_data(data_dir):
     file_path = os.path.join(data_dir, DATA_FILE)
 
     # Find out what format we have
-    zipgun_info = SqliteDict(file_path, tablename='zipgun_info')
-    version = zipgun_info.get('version', 0)
+    with sqlite3.connect(file_path) as conn:
+        try:
+            conn.execute('select count(*) from zipgun_info')
+            zipgun_info = SqliteDict(file_path, tablename='zipgun_info')
+            version = zipgun_info.get('version', 0)
+        except sqlite3.OperationalError:
+            version = 0
 
     if version == 0:
         country_postal_codes = SqliteDict(file_path)
@@ -83,9 +89,9 @@ def _import_sql_data(data_dir):
             country_postal_codes[country_code] = SqliteDict(
                 file_path, tablename='zg_{}'.format(country_code),
                 journal_mode='OFF')
+        zipgun_info.close()
     else:
         raise ValueError('Unknown data file version {}'.format(version))
-    zipgun_info.close()
     return country_postal_codes
 
 
