@@ -18,7 +18,7 @@ install_requires = [
 
 setup(
     name='zipgun',
-    version='0.1.2',
+    version='0.2.0',
     description='Postal code library for Python',
     author='Marc Sherry',
     author_email='msherry@gmail.com',

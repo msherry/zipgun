@@ -37,46 +37,67 @@ class FIELDS(object):
     ACCURACY = 11
 
 
+def _import_text_data(data_dir):
+    country_postal_codes = defaultdict(lambda: dict())  # pylint: disable=W0108
+
+    fieldnames = sorted([k for k in FIELDS.__dict__ if k.upper() == k],
+                        key=lambda x: FIELDS.__dict__[x])
+    for filename in glob.glob(os.path.join(data_dir, '*')):
+        with open(filename) as f:
+            reader = csv.DictReader(f, fieldnames=fieldnames,
+                                    delimiter=str('\t'))
+            for line in reader:
+                postal_codes = (
+                    country_postal_codes[line['COUNTRY_CODE']])
+                postal_code = line['POSTAL_CODE']
+                data = {
+                    'region': line['ADMIN_CODE1'],
+                    'city': line['PLACE_NAME'],
+                    'lat': line['LATITUDE'],
+                    'lon': line['LONGITUDE'],
+                    'country_code': line['COUNTRY_CODE'],
+                    'postal_code': postal_code,
+                }
+                if postal_code in postal_codes:
+                    postal_codes[postal_code].update(data)
+                else:
+                    postal_codes[postal_code] = data
+        return dict(country_postal_codes)
+
+
+def _import_sql_data(data_dir):
+    file_path = os.path.join(data_dir, DATA_FILE)
+
+    # Find out what format we have
+    zipgun_info = SqliteDict(file_path, tablename='zipgun_info')
+    version = zipgun_info.get('version', 0)
+
+    if version == 0:
+        country_postal_codes = SqliteDict(file_path)
+    elif version == 1:
+        country_postal_codes = {}
+        for country_code in zipgun_info['country_codes']:
+            if country_code in country_postal_codes:
+                raise ValueError('Duplicate entry found for {}'.format(
+                    country_code))
+            country_postal_codes[country_code] = SqliteDict(
+                file_path, tablename='zg_{}'.format(country_code),
+                journal_mode='OFF')
+    else:
+        raise ValueError('Unknown data file version {}'.format(version))
+    zipgun_info.close()
+    return country_postal_codes
+
+
 class Zipgun(object):
 
     def __init__(self, data_dir, force_text=False):
         if (force_text or
                 not os.path.exists(os.path.join(data_dir, DATA_FILE))):
-            country_postal_codes = self.import_text_data(data_dir)
+            country_postal_codes = _import_text_data(data_dir)
         else:
-            country_postal_codes = self.import_sql_data(data_dir)
+            country_postal_codes = _import_sql_data(data_dir)
         self.country_postal_codes = country_postal_codes
-
-    def import_sql_data(self, data_dir):
-        country_postal_codes = SqliteDict(os.path.join(data_dir, DATA_FILE))
-        return country_postal_codes
-
-    def import_text_data(self, data_dir):
-        country_postal_codes = defaultdict(lambda: dict())
-
-        fieldnames = sorted([k for k in FIELDS.__dict__ if k.upper() == k],
-                            key=lambda x: FIELDS.__dict__[x])
-        for filename in glob.glob(os.path.join(data_dir, '*')):
-            with open(filename) as f:
-                reader = csv.DictReader(f, fieldnames=fieldnames,
-                                        delimiter=str('\t'))
-                for line in reader:
-                    postal_codes = (
-                        country_postal_codes[line['COUNTRY_CODE']])
-                    postal_code = line['POSTAL_CODE']
-                    data = {
-                        'region': line['ADMIN_CODE1'],
-                        'city': line['PLACE_NAME'],
-                        'lat': line['LATITUDE'],
-                        'lon': line['LONGITUDE'],
-                        'country_code': line['COUNTRY_CODE'],
-                        'postal_code': postal_code,
-                    }
-                    if postal_code in postal_codes:
-                        postal_codes[postal_code].update(data)
-                    else:
-                        postal_codes[postal_code] = data
-            return dict(country_postal_codes)
 
     def lookup(self, postal_code, country_code='US'):
         postal_codes = self.country_postal_codes.get(country_code, {})
