@@ -22,7 +22,7 @@ setup(
     description='Postal code library for Python',
     author='Marc Sherry',
     author_email='msherry@gmail.com',
-    packages=['zipgun'],
+    packages=['zipgun', 'zipgun.scripts'],
     url='http://github.com/msherry/zipgun',
     tests_require=tests_require,
     install_requires=install_requires,
