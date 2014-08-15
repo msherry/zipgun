@@ -4,9 +4,13 @@ from collections import defaultdict
 import csv
 import glob
 import os
-import sqlite3
 
-from sqlitedict import SqliteDict
+try:
+    import sqlite3
+    from sqlitedict import SqliteDict
+except ImportError:
+    pass
+
 
 DATA_FILE = 'zipgun.db'
 
