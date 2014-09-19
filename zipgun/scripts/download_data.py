@@ -16,7 +16,7 @@ def get_file_list(base_url='http://download.geonames.org/export/zip/'):
 
     """
     content = urllib2.urlopen(base_url).read()
-    url_pattern = re.compile('<a href="([A-Z]{2}\.zip)">')
+    url_pattern = re.compile(r'<a href="([A-Z]{2}\.zip)">')
     for match in url_pattern.finditer(content):
         filename = match.group(1)
         url = urlparse.urljoin(base_url, filename)
