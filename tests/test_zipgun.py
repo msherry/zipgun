@@ -15,6 +15,12 @@ class TestZipgun(TestCase):
         super(TestZipgun, self).setUp()
         self.zipgun = zipgun.Zipgun(DATA_DIR)
 
+    def test_text_only(self):
+        text_zipgun = zipgun.Zipgun(DATA_DIR, force_text=True)
+        result = text_zipgun.lookup('94110')
+        self.assertEqual(result['region'], 'CA')
+        self.assertEqual(result['city'], 'San Francisco')
+
     def test_region(self):
         result = self.zipgun.lookup('94110')
         self.assertEqual(result['region'], 'CA')
@@ -31,6 +37,16 @@ class TestZipgun(TestCase):
     def test_non_us(self):
         result = self.zipgun.lookup('292-0066', 'JP')
         self.assertEqual(result['city'], 'Shinjuku')
+
+    def test_close(self):
+        result = self.zipgun.lookup('94110')
+        self.assertEqual(result['region'], 'CA')
+        self.assertEqual(result['city'], 'San Francisco')
+
+        self.zipgun.close()
+
+        with self.assertRaises(RuntimeError):
+            result = self.zipgun.lookup('94110')
 
     @unittest.skip("Encoding/decoding doesn't work properly yet")
     def test_unicode(self):

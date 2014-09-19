@@ -108,7 +108,18 @@ class Zipgun(object):
         else:
             country_postal_codes = _import_sql_data(data_dir)
         self.country_postal_codes = country_postal_codes
+        self.valid = True
 
     def lookup(self, postal_code, country_code='US'):
+        if not self.valid:
+            raise RuntimeError('Zipgun object already closed')
         postal_codes = self.country_postal_codes.get(country_code, {})
         return postal_codes.get(postal_code, {})
+
+    def close(self):
+        self.valid = False
+        if isinstance(self.country_postal_codes, SqliteDict):
+            self.country_postal_codes.close()
+            return
+        for dikt in self.country_postal_codes.itervalues():
+            dikt.close()
