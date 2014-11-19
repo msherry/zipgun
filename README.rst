@@ -1,3 +1,6 @@
+zipgun
+======
+
 .. image:: https://pypip.in/version/zipgun/badge.png
     :target: https://pypi.python.org/pypi/zipgun
 .. image:: https://pypip.in/download/zipgun/badge.png
@@ -5,9 +8,6 @@
 .. image:: https://pypip.in/license/zipgun/badge.png
     :target: https://pypi.python.org/pypi/zipgun
 
-
-zipgun
-======
 
 A postal code library for Python. Uses data from the [GeoNames project](http://www.geonames.org/).
 
