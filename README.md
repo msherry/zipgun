@@ -1,3 +1,11 @@
+.. image:: https://pypip.in/version/zipgun/badge.png
+    :target: https://pypi.python.org/pypi/zipgun
+.. image:: https://pypip.in/download/zipgun/badge.png
+    :target: https://pypi.python.org/pypi/zipgun
+.. image:: https://pypip.in/license/zipgun/badge.png
+    :target: https://pypi.python.org/pypi/zipgun
+
+
 zipgun
 ======
 
