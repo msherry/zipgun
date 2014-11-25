@@ -3,6 +3,9 @@ zipgun
 
 A postal code library for Python. Uses data from the [GeoNames project](http://www.geonames.org/).
 
+[![Latest Version](https://pypip.in/version/zipgun/badge.svg)](https://pypi.python.org/pypi/zipgun/)
+[![Downloads](https://pypip.in/download/zipgun/badge.svg)](https://pypi.python.org/pypi/zipgun/)
+[![License](https://pypip.in/license/zipgun/badge.svg)](https://pypi.python.org/pypi/zipgun/)
 
 Usage
 -----
