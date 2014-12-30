@@ -9,8 +9,10 @@ import urllib2
 import urlparse
 import subprocess
 
+BASE_URL = 'http://download.geonames.org/export/zip/'
+ALL_COUNTRIES_URL = 'http://download.geonames.org/export/zip/allCountries.zip'
 
-def get_file_list(base_url='http://download.geonames.org/export/zip/'):
+def get_file_list(base_url=BASE_URL):
     """Get and return postal data files from GeoNames project as
     a (filename, url) iterator
 
@@ -23,12 +25,22 @@ def get_file_list(base_url='http://download.geonames.org/export/zip/'):
         yield (filename, url)
 
 
+def get_file_list_all_countries():
+    """
+    Just return the one text file with everything
+    """
+    return [
+        ('allCountries.zip', ALL_COUNTRIES_URL),
+    ]
+
+
 def download_postal_data():
-    """Download and unzip all postal data from GeoNames project in current
+    """
+    Download and unzip all postal data from GeoNames project in current
     directory
 
     """
-    for filename, url in get_file_list():
+    for filename, url in get_file_list_all_countries():
         print 'Downloading', url, '...'
         content = urllib2.urlopen(url).read()
         with open(filename, 'wb') as zipfile:
